@@ -31,6 +31,7 @@ ACTIONS = [
   'validate'
 ].freeze
 
+STRICT_VALIDATION = ENV.fetch('TERRAORG_STRICT_VALIDATION', 'true')
 SQUADS_FILE = ENV.fetch('TERRAORG_SQUADS', 'squads.json')
 PLATOONS_FILE = ENV.fetch('TERRAORG_PLATOONS', 'platoons.json')
 ORG_FILE = ENV.fetch('TERRAORG_ROOT', 'org.json')
@@ -95,7 +96,8 @@ platoons = Platoons.new(JSON.parse(platoons_data), squads, people, GSUITE_DOMAIN
 org_data = File.read(ORG_FILE)
 org = Org.new(JSON.parse(org_data), platoons, squads, people, GSUITE_DOMAIN)
 
-org.validate!
+strict = (STRICT_VALIDATION == 'true')
+org.validate!(strict: strict)
 
 case action
 when 'generate-squads-md'

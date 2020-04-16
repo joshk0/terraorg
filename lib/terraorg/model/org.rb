@@ -49,23 +49,33 @@ class Org
     @squads = squads
   end
 
-  def validate!
+  def validate!(strict: true)
+    failure = false
+
     # Do not allow the JSON files to contain any people who have left.
-    raise "Users have left the company: #{@people.inactive.map(&:id).join(', ')}" unless @people.inactive.empty?
+    unless @people.inactive.empty?
+      $stderr.puts "ERROR: Users have left the company: #{@people.inactive.map(&:id).join(', ')}"
+      failure = true
+    end
 
     # Do not allow the org to be totally empty.
-    raise 'Org has no platoons or exception squads' if @member_platoons.size + @member_exception_squads.size == 0
+    if @member_platoons.size + @member_exception_squads.size == 0
+      $stderr.puts 'ERROR: Org has no platoons or exception squads'
+      failure = true
+    end
 
     # Require all platoons to be part of the org.
     platoon_diff = Set.new(@platoons.all_names) - Set.new(@member_platoon_names)
     unless platoon_diff.empty?
-      raise "Platoons are not used in the org: #{platoon_diff.to_a.sort}"
+      $stderr.puts "ERROR: Platoons are not used in the org: #{platoon_diff.to_a.sort}"
+      failure = true
     end
 
     # Require all squads to be used in the org.
     squad_diff = Set.new(@squads.all_names) - Set.new(@platoons.all_squad_names) - Set.new(@member_exception_squad_names)
     unless squad_diff.empty?
-      raise "Squad(s) are not used in the org: #{squad_diff.to_a.sort}"
+      $stderr.puts "ERROR: Squad(s) are not used in the org: #{squad_diff.to_a.sort}"
+      failure = true
     end
 
     all_squads = (@member_platoons.map(&:member_squads) + @member_exception_squads).flatten
@@ -79,7 +89,8 @@ class Org
       count > 1
     end
     if !more_than_one_platoon.empty?
-      raise "Squads are part of more than one platoon: #{more_than_one_platoon}"
+      $stderr.puts "ERROR: Squads are part of more than one platoon: #{more_than_one_platoon}"
+      failure = true
     end
 
     # Validate that a squad member belongs to some maximum number of squads
@@ -93,8 +104,8 @@ class Org
       count > MAX_MEMBER_SQUADS_PER_PERSON
     end
     if !more_than_max_squads.empty?
-      # TODO(joshk): Enforce after April 17th
-      $stderr.puts "WARNING: Members are part of more than #{MAX_MEMBER_SQUADS_PER_PERSON} squads: #{more_than_max_squads}"
+      $stderr.puts "ERROR: People are members of more than #{MAX_MEMBER_SQUADS_PER_PERSON} squads: #{more_than_max_squads}"
+      failure = true
     end
 
     associate_count = {}
@@ -105,8 +116,8 @@ class Org
       count > MAX_ASSOCIATE_SQUADS_PER_PERSON
     end
     if !more_than_max_squads.empty?
-      # TODO(joshk): Enforce after April 17th
-      $stderr.puts "WARNING: People associated with more than #{MAX_ASSOCIATE_SQUADS_PER_PERSON} squads: #{more_than_max_squads}"
+      $stderr.puts "ERROR: People are associates of more than #{MAX_ASSOCIATE_SQUADS_PER_PERSON} squads: #{more_than_max_squads}"
+      failure = true
     end
 
     # Validate that a squad member is not also an org exception
@@ -115,8 +126,11 @@ class Org
       exceptions.member? member
     end
     if !exception_and_squad_member.empty?
-      raise "Exception members are also squad members: #{exception_and_squad_member}"
+      $stderr.puts "ERROR: Exception members are also squad members: #{exception_and_squad_member}"
+      failure = true
     end
+
+    raise "CRITICAL: Validation failed due to at least one error above" if failure && strict
   end
 
   def members
