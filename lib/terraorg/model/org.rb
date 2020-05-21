@@ -97,7 +97,8 @@ class Org
     # across the entire org. A person can be an associate of other squads
     # at a different count. See top of file for defined limits.
     squad_count = {}
-    all_squads.map(&:teams).flatten.map(&:values).flatten.map(&:members).flatten.each do |member|
+    all_members = all_squads.map(&:teams).flatten.map(&:values).flatten.map(&:members).flatten
+    all_members.each do |member|
       squad_count[member.id] = squad_count.fetch(member.id, 0) + 1
     end
     more_than_max_squads = squad_count.select do |member, count|
@@ -109,7 +110,8 @@ class Org
     end
 
     associate_count = {}
-    all_squads.map(&:teams).flatten.map(&:values).flatten.map(&:associates).flatten.each do |assoc|
+    all_associates = all_squads.map(&:teams).flatten.map(&:values).flatten.map(&:associates).flatten
+    all_associates.each do |assoc|
       associate_count[assoc.id] = associate_count.fetch(assoc.id, 0) + 1
     end
     more_than_max_squads = associate_count.select do |_, count|
@@ -127,6 +129,13 @@ class Org
     end
     if !exception_and_squad_member.empty?
       $stderr.puts "ERROR: Exception members are also squad members: #{exception_and_squad_member}"
+      failure = true
+    end
+
+    # Validate that any associate is a member of some squad
+    associates_but_not_members = Set.new(all_associates.map(&:id)) - Set.new(all_members.map(&:id)) - exceptions
+    if !associates_but_not_members.empty?
+      $stderr.puts "ERROR: #{associates_but_not_members.map(&:id)} are associates of squads but not members of any squad"
       failure = true
     end
 

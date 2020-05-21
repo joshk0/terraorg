@@ -34,7 +34,9 @@ Based on the org that this tool was originally designed for, orgs are expected
 to have three levels:
 
 * *squads*: the base unit of team-dom, containing people, who may be in
-  different geographical regions.
+  different geographical regions. Teams contain _members_ (full time heads)
+  and _associates_ (typically part time floaters.) Any associate of a squad
+  must also have a home squad for which they are a full time member.
 * *platoons*: a unit which contains squads and exceptional people who are
   members of the platoon, but not part of any squad
 * *org*: The whole organization, including its manager, any exceptional squads
