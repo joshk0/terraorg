@@ -47,6 +47,10 @@ The tool generates groups for each granular unit of organization in Okta and G
 Suite in Terraform. With patching, it could be possible for more organizational
 systems to be supported.
 
+## Diagram
+
+![Diagram of org structure](https://github.com/joshk0/terraorg/tree/master/img/diagram.png)
+
 ## How it works
 
 Firstly, take your entire existing organization and define it using the
