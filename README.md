@@ -49,7 +49,7 @@ systems to be supported.
 
 ## Diagram
 
-![Diagram of org structure](https://github.com/joshk0/terraorg/tree/master/img/diagram.png)
+![Diagram of org structure](img/diagram.png)
 
 ## How it works
 
