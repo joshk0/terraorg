@@ -54,7 +54,7 @@ class Org
 
     # Do not allow the JSON files to contain any people who have left.
     unless @people.inactive.empty?
-      $stderr.puts "ERROR: Users have left the company: #{@people.inactive.map(&:id).join(', ')}"
+      $stderr.puts "ERROR: Users have left the company, or are Suspended in Okta: #{@people.inactive.map(&:id).join(', ')}"
       failure = true
     end
 
