@@ -15,7 +15,7 @@
 require 'faraday'
 
 class Person
-  ACTIVE_USER_STATUSES = ['ACTIVE', 'PROVISIONED'].freeze
+  ACTIVE_USER_STATUSES = ['ACTIVE', 'PROVISIONED', 'PASSWORD_EXPIRED'].freeze
 
   attr_accessor :id, :name, :okta_id, :email, :status
 
