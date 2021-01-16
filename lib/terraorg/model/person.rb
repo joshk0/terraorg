@@ -14,8 +14,11 @@
 
 require 'faraday'
 
+# The following statuses are considered ACTIVE by terraorg, which allow PRs to continue and be merged. 
+# A DEACTIVATED account status needs to be removed from the repository before merging PRs
+
 class Person
-  ACTIVE_USER_STATUSES = ['ACTIVE', 'PROVISIONED', 'PASSWORD_EXPIRED'].freeze
+  ACTIVE_USER_STATUSES = ['ACTIVE', 'PROVISIONED', 'PASSWORD_EXPIRED', 'SUSPENDED'].freeze
 
   attr_accessor :id, :name, :okta_id, :email, :status
 
