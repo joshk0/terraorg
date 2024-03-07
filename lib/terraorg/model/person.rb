@@ -18,7 +18,7 @@ require 'faraday'
 # A DEACTIVATED account status needs to be removed from the repository before merging PRs
 
 class Person
-  ACTIVE_USER_STATUSES = ['ACTIVE', 'PROVISIONED', 'PASSWORD_EXPIRED', 'SUSPENDED'].freeze
+  ACTIVE_USER_STATUSES = ['ACTIVE', 'PROVISIONED', 'PASSWORD_EXPIRED', 'SUSPENDED', 'LOCKED_OUT'].freeze
 
   attr_accessor :id, :name, :okta_id, :email, :status
 
