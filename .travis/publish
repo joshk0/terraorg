@@ -5,6 +5,7 @@ if [ -z "$RUBYGEMS_API_KEY" ]; then
   exit 1
 fi
 
+mkdir -p $HOME/.gem
 echo ":rubygems_api_key: $RUBYGEMS_API_KEY" > $HOME/.gem/credentials
 chmod 0600 $HOME/.gem/credentials
 gem push terraorg-*.gem
